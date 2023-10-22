@@ -9,6 +9,7 @@
  for you to use if you need it!
  */
 
+ 
 const allWagesFor = function () {
     const eligibleDates = this.timeInEvents.map(function (e) {
         return e.date
@@ -21,3 +22,62 @@ const allWagesFor = function () {
     return payable
 }
 
+
+function createEmployeeRecord(employeeInfo) {
+    return {
+      firstName: employeeInfo[0],
+      familyName: employeeInfo[1],
+      title: employeeInfo[2],
+      payPerHour: employeeInfo[3],
+      timeInEvents: [],
+      timeOutEvents: [],
+    };
+  }
+  
+  function createEmployeeRecords(employees) {
+    return employees.map(createEmployeeRecord);
+  }
+  
+  function createTimeInEvent(employee, dateTime) {
+    if (dateTime) {
+        const [date, hour] = dateTime.split(' ');
+        employee.timeInEvents.push({ type: 'TimeIn', hour: parseInt(hour, 10), date });
+    } else {
+        console.error('Invalid dateTime provided in createTimeInEvent');
+    }
+    return employee;
+}
+
+function createTimeOutEvent(employee, dateTime) {
+    if (dateTime) {
+        const [date, hour] = dateTime.split(' ');
+        employee.timeOutEvents.push({ type: 'TimeOut', hour: parseInt(hour, 10), date });
+    } else {
+        console.error('Invalid dateTime provided in createTimeOutEvent');
+    }
+    return employee;
+}
+  
+  function hoursWorkedOnDate(employee, date) {
+    const timeInEvent = employee.timeInEvents.find((event) => event.date === date);
+    const timeOutEvent = employee.timeOutEvents.find((event) => event.date === date);
+    const hoursWorked = (timeOutEvent.hour - timeInEvent.hour) / 100;
+    return hoursWorked;
+  }
+  
+  function wagesEarnedOnDate(employee, date) {
+    const hoursWorked = hoursWorkedOnDate(employee, date);
+    const wages = hoursWorked * employee.payPerHour;
+    return wages;
+  }
+
+  
+  function findEmployeeByFirstName(srcArray, firstName) {
+    return srcArray.find((employee) => employee.firstName === firstName);
+  }
+  
+  function calculatePayroll(employees) {
+    return employees.reduce((totalPayroll, employee) => totalPayroll + allWagesFor(employee), 0);
+  }
+
+  
